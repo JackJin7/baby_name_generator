@@ -4,13 +4,12 @@ from models import *
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Baby names with RNN.")
-    parser.add_argument('--model', default='LSTM', help='RNN or LSTM.')
-    parser.add_argument('--batch', default=1024, type=int, help='Sampling batch size.')
-    parser.add_argument('--device', default='cuda', help='GPU/CPU devices.')
-    parser.add_argument('--dropout', default=0.1, type=float, help='Dropout rate.')
-    parser.add_argument('--lr', default=0.1, type=float, help='Initial learning rate.')  # 0.5
-    parser.add_argument('--epochs', default=500, type=int, help='Number of epochs to train.')
-    parser.add_argument('--layer_num', default=1, type=int, help='Layer number.')
+    parser.add_argument('--model', default='RNN', help='RNN or LSTM. default RNN')
+    parser.add_argument('--batch', default=1024, type=int, help='Sampling batch size. default 1024')
+    parser.add_argument('--device', default='cuda', help='cpu/gpu devices. default gpu')
+    parser.add_argument('--dropout', default=0.1, type=float, help='Dropout rate. default 0.1')
+    parser.add_argument('--lr', default=0.1, type=float, help='Initial learning rate. default 0.1')
+    parser.add_argument('--epochs', default=1000, type=int, help='Number of epochs to train. default 1000')
     return parser.parse_args()
 
 
@@ -24,7 +23,6 @@ if __name__ == '__main__':
     lr = args.lr
     batch = args.batch
     epochs = args.epochs
-    layer_num = args.layer_num
     dropout = args.dropout
 
     X, Y, word_len = load_data()

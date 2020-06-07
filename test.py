@@ -6,13 +6,9 @@ import matplotlib.pyplot as plt
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Baby names with RNN.")
-    parser.add_argument('--model', default='RNN', help='RNN or LSTM.')
-    parser.add_argument('--batch', default=512, help='Sampling batch size.')
-    parser.add_argument('--device', default='cuda', help='GPU/CPU devices.')
-    parser.add_argument('--dropout', default=0.0, help='Dropout rate.')
-    parser.add_argument('--lr', default=0.01, help='Initial learning rate.')  # 0.5
-    parser.add_argument('--epochs', default=20, help='Number of epochs to train.')
-    parser.add_argument('--layer_num', default=1, help='Layer number.')
+    parser.add_argument('--model', default='RNN', help='RNN or LSTM. default RNN')
+    parser.add_argument('--device', default='cuda', help='cpu/gpu devices. default gpu')
+    parser.add_argument('--dropout', default=0.0, help='Dropout rate. default ')
     return parser.parse_args()
 
 
@@ -118,6 +114,7 @@ if __name__ == '__main__':
     else:
         device = 'cuda'
 
+    dropout = args.dropout
     layer_num = args.layer_num
 
     model_list = ['RNN', 'LSTM']
@@ -126,15 +123,27 @@ if __name__ == '__main__':
     # epoch_list = [2000]
 
     models = {}
-    for model in model_list:
-        models[model] = {}
-        for epoch in epoch_list:
-            if model == 'RNN':
-                models[model][epoch] = RNNCell(dim=28, device=device)
-            else:
-                models[model][epoch] = LSTMCell(dim=28, device=device)
-            models[model][epoch].load_state_dict(torch.load('model/{}_params_{}.pkl'.format(model, epoch)))
-            models[model][epoch].eval()
+
+    if dropout > 0:
+        for model in model_list:
+            models[model] = {}
+            for epoch in epoch_list:
+                if model == 'RNN':
+                    models[model][epoch] = RNNCell(dim=28, device=device, dropout=dropout)
+                else:
+                    models[model][epoch] = LSTMCell(dim=28, device=device, dropout=dropout)
+                models[model][epoch].load_state_dict(torch.load('model/{}_params_{}.pkl'.format(model, epoch)))
+                models[model][epoch].train()
+    else:
+        for model in model_list:
+            models[model] = {}
+            for epoch in epoch_list:
+                if model == 'RNN':
+                    models[model][epoch] = RNNCell(dim=28, device=device)
+                else:
+                    models[model][epoch] = LSTMCell(dim=28, device=device)
+                models[model][epoch].load_state_dict(torch.load('model/{}_params_{}.pkl'.format(model, epoch)))
+                models[model][epoch].eval()
 
 
     while True:
